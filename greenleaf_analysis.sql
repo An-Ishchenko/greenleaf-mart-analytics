@@ -27,7 +27,7 @@ SELECT
 FROM priced_lines p
 JOIN stores s ON s.store_id = p.store_id
 GROUP BY s.store_name, month
-ORDER BY s.store_name, month
+ORDER BY s.store_name, month;
 
 
 --HQ expense allocation - Even after allocating marketing/admin costs proportionally to revenue, 
@@ -60,7 +60,7 @@ JOIN total_revenue t ON t.month = mr.month
 JOIN hq_expenses h ON h.month = mr.month
 JOIN stores s ON s.store_id = mr.store_id
 LEFT JOIN store_expenses se ON se.store_id = mr.store_id AND se.month = mr.month
-ORDER BY s.store_name, mr.month
+ORDER BY s.store_name, mr.month;
 
 
 --Revenue per sqm — Kyiv Osokorky (the newest store, largest format) generates just 12,775 UAH/sqm - 
@@ -75,7 +75,7 @@ SELECT s.store_name, s.format, s.size_sqm,
        ROUND(sr.total_revenue / s.size_sqm, 2) AS revenue_per_sqm
 FROM store_revenue sr
 JOIN stores s ON s.store_id = sr.store_id
-ORDER BY revenue_per_sqm DESC
+ORDER BY revenue_per_sqm DESC;
 
 
 
@@ -96,7 +96,7 @@ FROM (
     FROM receipts
     WHERE customer_id IS NOT NULL AND customer_id <> ''
     GROUP BY customer_id
-) t
+) t;
 
 
 
@@ -128,7 +128,7 @@ SELECT customer_id, recency_days, frequency, ROUND(monetary,2) AS monetary,
         ELSE 'Needs Attention'
     END AS segment
 FROM scored
-ORDER BY monetary DESC
+ORDER BY monetary DESC;
 
 
 
@@ -138,7 +138,7 @@ SELECT c.customer_id, c.full_name, c.registration_date, c.home_city, c.loyalty_t
 FROM customers c
 LEFT JOIN receipts r ON r.customer_id = c.customer_id
 WHERE r.receipt_id IS NULL
-ORDER BY c.registration_date
+ORDER BY c.registration_date;
 
 
 
@@ -157,7 +157,7 @@ SELECT s.store_name, m.month,
 FROM monthly m
 JOIN stores s ON s.store_id = m.store_id
 WHERE s.store_id IN ('S08', 'S02')
-ORDER BY s.store_name, m.month
+ORDER BY s.store_name, m.month;
 
 WITH monthly AS (
     SELECT store_id, strftime(receipt_date, '%Y-%m') AS month, SUM(line_amount) AS revenue
@@ -173,7 +173,7 @@ SELECT months_since_open, ROUND(AVG(revenue), 2) AS avg_revenue_mature_stores
 FROM tagged
 WHERE months_since_open BETWEEN 0 AND 6
 GROUP BY months_since_open
-ORDER BY months_since_open
+ORDER BY months_since_open;
 
 
 
@@ -196,7 +196,7 @@ SELECT category,
     ROUND((SUM(line_amount) - SUM(line_cogs)) * 100.0 / SUM(line_amount), 1) AS gross_margin_pct
 FROM priced_lines
 GROUP BY category
-ORDER BY gross_margin_pct DESC
+ORDER BY gross_margin_pct DESC;
 
 
 
@@ -210,7 +210,7 @@ WITH monthly AS (
 SELECT month, ROUND(revenue, 2) AS revenue,
     ROUND((revenue - LAG(revenue) OVER (ORDER BY month)) * 100.0 / LAG(revenue) OVER (ORDER BY month), 1) AS mom_growth_pct
 FROM monthly
-ORDER BY month
+ORDER BY month;
 
 
 
@@ -234,4 +234,4 @@ FROM activity a
 JOIN cohort_size cs ON cs.cohort_month = a.cohort_month
 WHERE a.months_since_signup BETWEEN 0 AND 6
 GROUP BY a.cohort_month, cs.cohort_customers, a.months_since_signup
-ORDER BY a.cohort_month, a.months_since_signup
+ORDER BY a.cohort_month, a.months_since_signup;
