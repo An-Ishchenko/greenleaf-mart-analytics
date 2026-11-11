@@ -88,7 +88,7 @@ SELECT
     ROUND(SUM(line_amount), 2) AS total_revenue,
     ROUND(SUM(line_amount) / COUNT(DISTINCT receipt_id), 2) AS avg_receipt_value
 FROM receipts
-GROUP BY buyer_type
+GROUP BY buyer_type;
 
 SELECT ROUND(AVG(order_count), 2) AS avg_orders_per_loyalty_customer
 FROM (
